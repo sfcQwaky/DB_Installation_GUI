@@ -5,7 +5,8 @@ from tkinter import ttk
 FONT_1 = "Ariel"
 FONT_2 = "Helvetica"
 STEP_COUNT = 0
-DB_TYPE =""
+DB_TYPE = ""
+CR_DB_NAME = ""  #Created database name
 
 #Initial GUI setup
 window = Tk()
@@ -64,6 +65,7 @@ def step_3():
 def next_button():
     global STEP_COUNT
     global DB_TYPE
+    global CR_DB_NAME
 
     if STEP_COUNT == 0:
         step_1()
@@ -73,6 +75,7 @@ def next_button():
         step_2()
 
     elif STEP_COUNT == 2:
+        DB_NAME = db_name.get()
         step_3()
 
     STEP_COUNT += 1         #after every click on NEXT button, STEP count goes up
