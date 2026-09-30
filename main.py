@@ -1,5 +1,7 @@
 from tkinter import *
 from tkinter import ttk
+from db_setup import sqlite_db_creation, postgresql_db_creation
+
 
 #   Definition of global variables  #
 FONT_1 = "Ariel"
@@ -35,31 +37,37 @@ frame.configure(background="#D3D3D3")
 
 #------     FUNCTIONS   ------#
 
-def step_0():
+def step_0():               # Welcome screen
     welcome_label.grid()
     db_label.grid_remove()
     db_select.grid_remove()
     previous_btn.grid_remove()
 
 
-def step_1():
+def step_1():               # Step for selecting type of database
     welcome_label.grid_remove()
     db_label.grid()
     db_select.grid()
     previous_btn.grid()
     db_name.grid_remove()
 
-def step_2():
+def step_2():               # Step for entering name of database
     db_label.config(text="Enter name of your database:")
     db_select.grid_remove()
     db_name.grid()
 
-def step_3():
+def step_3():               # Step which runs installation
+
     db_name.grid_remove()
     next_btn.grid_remove()
     previous_btn.grid_remove()
     db_label.config(text="Installation is running...")
     db_label.grid(row=0, column=0, columnspan=3, pady=10)
+
+    window.after(2000, db_installation)     #delay of 2 seconds for running the query
+
+def step_4():               # Finale/finish step
+    pass
 
 #function for button Next
 def next_button():
@@ -75,13 +83,13 @@ def next_button():
         step_2()
 
     elif STEP_COUNT == 2:
-        DB_NAME = db_name.get()
+        CR_DB_NAME = db_name.get()
         step_3()
 
     STEP_COUNT += 1         #after every click on NEXT button, STEP count goes up
 
 #function for button Previous
-def previous_button():
+def previous_button():          # only on steps 1 and 2 there is previous button
     global STEP_COUNT
 
     if STEP_COUNT == 1:
@@ -91,10 +99,17 @@ def previous_button():
 
     STEP_COUNT -= 1
 
-def db_creation():
-    global STEP_COUNT
+# DB installation function
+def db_installation():
+    global DB_TYPE
+    global CR_DB_NAME
+    message = ""
+    if DB_TYPE == "SQLite":
+        message = sqlite_db_creation(CR_DB_NAME)
+    elif DB_TYPE == "PostgreSQL":
+        message = postgresql_db_creation(CR_DB_NAME)
 
-    print("Here is where we create db")
+    db_label.config(text=f"{message}")
 
 #---------------------------------#
 
@@ -119,7 +134,7 @@ db_label.grid(row=0, column=0, columnspan=2, pady=10)
 db_label.grid_remove()
 
     #database selection menu/combobox
-db_select = ttk.Combobox(frame, values = ["SQLite","PostgreSQL","MongoDB"])
+db_select = ttk.Combobox(frame, values = ["SQLite","PostgreSQL"])
 db_select.grid(row=0, column=3, pady=10)
 db_select.grid_remove()
 

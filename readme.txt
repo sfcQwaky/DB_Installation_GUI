@@ -33,4 +33,5 @@
 
 ----    3nd step updates     ----
 
+    - Rethink testing
     - I'll need to figure out how to pack this in standalone installation exe file
