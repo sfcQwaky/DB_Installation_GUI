@@ -9,14 +9,16 @@ FONT_2 = "Helvetica"
 STEP_COUNT = 0
 DB_TYPE = ""
 CR_DB_NAME = ""  #Created database name
+DB_USER_VL = ""
+DB_PASS_VL = ""
 
 #Initial GUI setup
 window = Tk()
 window.title("Install your local friendly database")
 
 #calculation of position for my GUI, making it central position
-width = 400
-height = 200
+width = 500
+height = 300
 screen_width = window.winfo_screenwidth()
 screen_height = window.winfo_screenheight()
 
@@ -26,14 +28,14 @@ y = int(round(y*0.8,0))     #I do not want that height of window is 100% center,
 
 
 window.geometry(f"{width}x{height}+{x}+{y}")
-window.configure(background="#D3D3D3") #this is light gray color, optional: E0E0E0, EEEEEE
+window.configure(background="#E0E0E0") #this is light gray color, optional: E0E0E0, EEEEEE
 
 #-----------------------------#
 
 #Frame setup, used to center elements
 frame = Frame(window)
 frame.place(relx=0.5,rely=0.4,anchor="center")
-frame.configure(background="#D3D3D3")
+frame.configure(background="#E0E0E0")
 
 #------     FUNCTIONS   ------#
 
@@ -55,25 +57,39 @@ def step_2():               # Step for entering name of database
     db_label.config(text="Enter name of your database:")
     db_select.grid_remove()
     db_name.grid()
+    next_btn.grid(row=3, column=3)
+    previous_btn.grid(row=3, column=1, padx=10)
+    if DB_TYPE == "PostgreSQL":
+        db_user_label.grid()
+        db_user.grid()
+        db_password_label.grid()
+        db_password.grid()
+
 
 def step_3():               # Step which runs installation
 
     db_name.grid_remove()
     next_btn.grid_remove()
     previous_btn.grid_remove()
+    db_user_label.grid_remove()
+    db_user.grid_remove()
+    db_password_label.grid_remove()
+    db_password.grid_remove()
     db_label.config(text="Installation is running...")
     db_label.grid(row=0, column=0, columnspan=3, pady=10)
 
     window.after(2000, db_installation)     #delay of 2 seconds for running the query
 
-def step_4():               # Finale/finish step
-    pass
+def finish_button():               # Closing the installation window
+    window.destroy()
 
 #function for button Next
 def next_button():
     global STEP_COUNT
     global DB_TYPE
     global CR_DB_NAME
+    global DB_USER_VL
+    global DB_PASS_VL
 
     if STEP_COUNT == 0:
         step_1()
@@ -84,6 +100,9 @@ def next_button():
 
     elif STEP_COUNT == 2:
         CR_DB_NAME = db_name.get()
+        if DB_TYPE == "PostgreSQL":
+            DB_USER_VL = db_user.get()
+            DB_PASS_VL = db_password.get()
         step_3()
 
     STEP_COUNT += 1         #after every click on NEXT button, STEP count goes up
@@ -107,9 +126,10 @@ def db_installation():
     if DB_TYPE == "SQLite":
         message = sqlite_db_creation(CR_DB_NAME)
     elif DB_TYPE == "PostgreSQL":
-        message = postgresql_db_creation(CR_DB_NAME)
+        message = postgresql_db_creation(db_name=CR_DB_NAME,db_user=DB_USER_VL,db_pass=DB_PASS_VL)
 
     db_label.config(text=f"{message}")
+    finish_btn.grid()
 
 #---------------------------------#
 
@@ -128,6 +148,11 @@ previous_btn = Button(frame, text="Previous", width=10, command=previous_button)
 previous_btn.grid(row=1, column=1, padx=10)
 previous_btn.grid_remove()      #initial hidden
 
+    #button finish
+finish_btn = Button(frame, text="Finish", width=10, command=finish_button)
+finish_btn.grid(row=1, column=3)
+finish_btn.grid_remove()        #initial hidden
+
     #database label element that changes on almost every STEP
 db_label = Label(frame, text="Select type of database", bg="#D3D3D3")
 db_label.grid(row=0, column=0, columnspan=2, pady=10)
@@ -142,6 +167,27 @@ db_select.grid_remove()
 db_name= Entry(frame, width=20)
 db_name.grid(row=0, column=3, pady=10)
 db_name.grid_remove()
+
+    #database user
+db_user = Entry(frame, width=20)
+db_user.grid(row=1, column=3, pady=10)
+db_user.grid_remove()
+
+    #database password
+db_password = Entry(frame, width=20)
+db_password.grid(row=2, column=3, pady=10)
+db_password.grid_remove()
+
+    #database user label
+db_user_label = Label(frame, text="Enter username:", bg="#D3D3D3")
+db_user_label.grid(row=1, column=0, columnspan=2, pady=10)
+db_user_label.grid_remove()
+
+    #database password
+db_password_label = Label(frame, text="Enter password:", bg="#D3D3D3")
+db_password_label.grid(row=2, column=0, columnspan=2, pady=10)
+db_password_label.grid_remove()
+
 
 #---------------------------------#
 
