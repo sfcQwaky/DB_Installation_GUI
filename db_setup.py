@@ -32,32 +32,35 @@ def sqlite_db_creation(db_name):
     return MSG
 
 
-def postgresql_db_creation(db_name):
+def postgresql_db_creation(db_name, db_user, db_pass):
     global MSG
     my_db_name = db_name
-    with  psycopg2.connect(
+    conn = psycopg2.connect(
         host="localhost",
         database="postgres",
-        user="postgres",
-        password="temppa55",
-        ) as conn:
-        conn.autocommit = True
+        user=db_user,
+        password=db_pass,
+        )
+    conn.autocommit = True
+    cur = conn.cursor()
+    try:
+        cur.execute(f"CREATE DATABASE {my_db_name};")
+        MSG = "Database successfully created."
+    except psycopg2.errors.DuplicateDatabase:
+        MSG = "Database already exists"
+    except psycopg2.Error as e:
+        MSG = f"Database creation failed: {e}"
+    finally:
+        conn.close()
+        cur.close()
 
-        with conn.cursor() as cur:
-            try:
-                cur.execute(f"CREATE DATABASE {my_db_name};")
-                MSG = "Database successfully created."
-            except psycopg2.errors.DuplicateDatabase:
-                MSG = "Database already exists"
-            except psycopg2.Error as e:
-                MSG = f"Database creation failed: {e}"
 
     with psycopg2.connect(
         host="localhost",
-        database=db_name,
-        user="postgres",
-        password="temppa55",
-    ) as conn:
+        database=my_db_name,
+        user=db_user,
+        password=db_pass,
+        ) as conn:
         sql = """
             CREATE TABLE IF NOT EXISTS assets (
                 asset_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -74,11 +77,12 @@ def postgresql_db_creation(db_name):
                 notes TEXT
             );
             """
-        with conn.cursor() as cur:
-            try:
-                cur.execute(sql)
-                MSG += " Table successfully created."
-            except psycopg2.Error as e:
-                MSG += f"Table creation failed: {e}"
+        cur = conn.cursor()
+        try:
+            cur.execute(sql)
+            MSG += " Table successfully created."
+        except psycopg2.Error as e:
+            MSG += f"Table creation failed: {e}"
+        cur.close()
 
     return MSG
