@@ -1,3 +1,4 @@
+import tkinter
 from tkinter import *
 from tkinter import ttk
 from db_setup import sqlite_db_creation, postgresql_db_creation
@@ -15,10 +16,13 @@ DB_PASS_VL = ""
 #Initial GUI setup
 window = Tk()
 window.title("Install your local friendly database")
+window.grid_columnconfigure(0, weight=1)
+window.grid_columnconfigure(1, weight=4)
+window.grid_rowconfigure(0, weight=1)
 
 #calculation of position for my GUI, making it central position
 width = 500
-height = 300
+height = 400
 screen_width = window.winfo_screenwidth()
 screen_height = window.winfo_screenheight()
 
@@ -33,9 +37,22 @@ window.configure(background="#E0E0E0") #this is light gray color, optional: E0E0
 #-----------------------------#
 
 #Frame setup, used to center elements
-frame = Frame(window)
-frame.place(relx=0.5,rely=0.4,anchor="center")
-frame.configure(background="#E0E0E0")
+# frame = Frame(window)
+# frame.place(relx=0.5,rely=0.4,anchor="center")
+# frame.configure(background="#E0E0E0")
+
+left_frame = tkinter.Frame(window, bg="#E0E0E0", width=100, height=300)
+right_frame = tkinter.Frame(window, bg="#E0E0E0", width=400, height=300)
+bottom_frame = tkinter.Frame(window, bg="#E0E0E0", width=500, height=100)
+
+left_frame.grid(row=0, column=0, padx=10, pady=10)
+right_frame.grid(row=0, column=1, padx=10, pady=10, sticky="ns")
+bottom_frame.grid(row=1, column=0, columnspan=2, sticky="ew")
+bottom_frame.grid_columnconfigure(0, weight=1)
+
+left_frame.grid_propagate(False)
+right_frame.grid_propagate(False)
+bottom_frame.grid_propagate(False)
 
 #------     FUNCTIONS   ------#
 
@@ -52,13 +69,15 @@ def step_1():               # Step for selecting type of database
     db_select.grid()
     previous_btn.grid()
     db_name.grid_remove()
+    db_user.grid_remove()
+    db_password.grid_remove()
+    db_user_label.grid_remove()
+    db_password_label.grid_remove()
 
 def step_2():               # Step for entering name of database
     db_label.config(text="Enter name of your database:")
     db_select.grid_remove()
     db_name.grid()
-    next_btn.grid(row=3, column=3)
-    previous_btn.grid(row=3, column=1, padx=10)
     if DB_TYPE == "PostgreSQL":
         db_user_label.grid()
         db_user.grid()
@@ -136,55 +155,59 @@ def db_installation():
 #------     GUI elements    ------#
 
     #welcome message
-welcome_label = Label(frame, text="Welcome to \"Installation of test database\" !!!", font=(FONT_2,12,"italic"), bg="#D3D3D3")
-welcome_label.grid(row=0, column=0, columnspan=4, pady=10)
+welcome_label = Label(right_frame, text="Welcome to \n \"Installation of test database\" !!!",
+                      wraplength=350,
+                      justify="center",
+                      font=(FONT_2,12,"italic"),
+                      bg="#E0E0E0")
+welcome_label.grid(row=0, column=0, pady=10)
 
     #button next
-next_btn = Button(frame, text="Next", width=10, command=next_button)
-next_btn.grid(row=1, column=3)
+next_btn = Button(bottom_frame, text="Next", width=10, command=next_button)
+next_btn.grid(row=0, column=2, padx=5, pady=30)
 
     #button previous
-previous_btn = Button(frame, text="Previous", width=10, command=previous_button)
-previous_btn.grid(row=1, column=1, padx=10)
+previous_btn = Button(bottom_frame, text="Previous", width=10, command=previous_button)
+previous_btn.grid(row=0, column=1, padx=5, pady=30)
 previous_btn.grid_remove()      #initial hidden
 
     #button finish
-finish_btn = Button(frame, text="Finish", width=10, command=finish_button)
-finish_btn.grid(row=1, column=3)
+finish_btn = Button(bottom_frame, text="Finish", width=10, command=finish_button)
+finish_btn.grid(row=0, column=2, padx=5, pady=30)
 finish_btn.grid_remove()        #initial hidden
 
     #database label element that changes on almost every STEP
-db_label = Label(frame, text="Select type of database", bg="#D3D3D3")
+db_label = Label(right_frame, text="Select type of database", bg="#E0E0E0")
 db_label.grid(row=0, column=0, columnspan=2, pady=10)
 db_label.grid_remove()
 
     #database selection menu/combobox
-db_select = ttk.Combobox(frame, values = ["SQLite","PostgreSQL"])
-db_select.grid(row=0, column=3, pady=10)
+db_select = ttk.Combobox(right_frame, values = ["SQLite","PostgreSQL"])
+db_select.grid(row=0, column=2, pady=10)
 db_select.grid_remove()
 
     #database name entry
-db_name= Entry(frame, width=20)
-db_name.grid(row=0, column=3, pady=10)
+db_name= Entry(right_frame, width=20)
+db_name.grid(row=0, column=2, pady=10)
 db_name.grid_remove()
 
     #database user
-db_user = Entry(frame, width=20)
-db_user.grid(row=1, column=3, pady=10)
+db_user = Entry(right_frame, width=20)
+db_user.grid(row=1, column=2, pady=10)
 db_user.grid_remove()
 
     #database password
-db_password = Entry(frame, width=20)
-db_password.grid(row=2, column=3, pady=10)
+db_password = Entry(right_frame, width=20)
+db_password.grid(row=2, column=2, pady=10)
 db_password.grid_remove()
 
     #database user label
-db_user_label = Label(frame, text="Enter username:", bg="#D3D3D3")
+db_user_label = Label(right_frame, text="Enter username:", bg="#E0E0E0")
 db_user_label.grid(row=1, column=0, columnspan=2, pady=10)
 db_user_label.grid_remove()
 
     #database password
-db_password_label = Label(frame, text="Enter password:", bg="#D3D3D3")
+db_password_label = Label(right_frame, text="Enter password:", bg="#E0E0E0")
 db_password_label.grid(row=2, column=0, columnspan=2, pady=10)
 db_password_label.grid_remove()
 
