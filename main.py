@@ -34,25 +34,23 @@ y = int(round(y*0.8,0))     #I do not want that height of window is 100% center,
 window.geometry(f"{width}x{height}+{x}+{y}")
 window.configure(background="#E0E0E0") #this is light gray color, optional: E0E0E0, EEEEEE
 
-#-----------------------------#
-
-#Frame setup, used to center elements
-# frame = Frame(window)
-# frame.place(relx=0.5,rely=0.4,anchor="center")
-# frame.configure(background="#E0E0E0")
+#------     FRAME DEFINITIONS AND SETUP   ------#
 
 left_frame = tkinter.Frame(window, bg="#E0E0E0", width=100, height=300)
 right_frame = tkinter.Frame(window, bg="#E0E0E0", width=400, height=300)
 bottom_frame = tkinter.Frame(window, bg="#E0E0E0", width=500, height=100)
 
-left_frame.grid(row=0, column=0, padx=10, pady=10)
-right_frame.grid(row=0, column=1, padx=10, pady=10, sticky="ns")
+left_frame.grid(row=0, column=0, padx=10, pady=10, sticky="ns")
+right_frame.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
 bottom_frame.grid(row=1, column=0, columnspan=2, sticky="ew")
 bottom_frame.grid_columnconfigure(0, weight=1)
 
 left_frame.grid_propagate(False)
 right_frame.grid_propagate(False)
 bottom_frame.grid_propagate(False)
+
+content_frame = Frame(right_frame, bg="#E0E0E0")
+content_frame.place(relx=0.5, rely=0.4, anchor="center")
 
 #------     FUNCTIONS   ------#
 
@@ -155,12 +153,12 @@ def db_installation():
 #------     GUI elements    ------#
 
     #welcome message
-welcome_label = Label(right_frame, text="Welcome to \n \"Installation of test database\" !!!",
+welcome_label = Label(content_frame, text="Welcome to \n \"Installation of test database\" !!!",
                       wraplength=350,
                       justify="center",
                       font=(FONT_2,12,"italic"),
                       bg="#E0E0E0")
-welcome_label.grid(row=0, column=0, pady=10)
+welcome_label.grid(row=0, column=1, pady=10)
 
     #button next
 next_btn = Button(bottom_frame, text="Next", width=10, command=next_button)
@@ -177,42 +175,41 @@ finish_btn.grid(row=0, column=2, padx=5, pady=30)
 finish_btn.grid_remove()        #initial hidden
 
     #database label element that changes on almost every STEP
-db_label = Label(right_frame, text="Select type of database", bg="#E0E0E0")
+db_label = Label(content_frame, text="Select type of database", bg="#E0E0E0")
 db_label.grid(row=0, column=0, columnspan=2, pady=10)
 db_label.grid_remove()
 
     #database selection menu/combobox
-db_select = ttk.Combobox(right_frame, values = ["SQLite","PostgreSQL"])
+db_select = ttk.Combobox(content_frame, values = ["SQLite","PostgreSQL"])
 db_select.grid(row=0, column=2, pady=10)
 db_select.grid_remove()
 
     #database name entry
-db_name= Entry(right_frame, width=20)
+db_name= Entry(content_frame, width=20)
 db_name.grid(row=0, column=2, pady=10)
 db_name.grid_remove()
 
     #database user
-db_user = Entry(right_frame, width=20)
+db_user = Entry(content_frame, width=20)
 db_user.grid(row=1, column=2, pady=10)
 db_user.grid_remove()
 
     #database password
-db_password = Entry(right_frame, width=20)
+db_password = Entry(content_frame, width=20)
 db_password.grid(row=2, column=2, pady=10)
 db_password.grid_remove()
 
     #database user label
-db_user_label = Label(right_frame, text="Enter username:", bg="#E0E0E0")
+db_user_label = Label(content_frame, text="Enter username:", bg="#E0E0E0")
 db_user_label.grid(row=1, column=0, columnspan=2, pady=10)
 db_user_label.grid_remove()
 
     #database password
-db_password_label = Label(right_frame, text="Enter password:", bg="#E0E0E0")
+db_password_label = Label(content_frame, text="Enter password:", bg="#E0E0E0")
 db_password_label.grid(row=2, column=0, columnspan=2, pady=10)
 db_password_label.grid_remove()
 
 
-#---------------------------------#
-
+#------     END OF GUI    ------#
 
 window.mainloop()
