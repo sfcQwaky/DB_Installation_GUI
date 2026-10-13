@@ -35,3 +35,7 @@
 
     - Rethink testing
     - I'll need to figure out how to pack this in standalone installation exe file
+
+----    4th step updates     ----
+
+    - I have abandon this type of step describing, instead I started to use Trello (Atlassian)

@@ -2,6 +2,9 @@ import tkinter
 from tkinter import *
 from tkinter import ttk
 from db_setup import sqlite_db_creation, postgresql_db_creation
+import os
+import sys
+
 
 
 #   Definition of global variables  #
@@ -34,15 +37,17 @@ y = int(round(y*0.8,0))     #I do not want that height of window is 100% center,
 window.geometry(f"{width}x{height}+{x}+{y}")
 window.configure(background="#E0E0E0") #this is light gray color, optional: E0E0E0, EEEEEE
 
-#------     FRAME DEFINITIONS AND SETUP   ------#
+#------     FRAME AND SEPARATOR DEFINITIONS AND SETUP   ------#
 
 left_frame = tkinter.Frame(window, bg="#E0E0E0", width=100, height=300)
 right_frame = tkinter.Frame(window, bg="#E0E0E0", width=400, height=300)
 bottom_frame = tkinter.Frame(window, bg="#E0E0E0", width=500, height=100)
+separator = ttk.Separator(window, orient="horizontal")
 
-left_frame.grid(row=0, column=0, padx=10, pady=10, sticky="ns")
+left_frame.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
 right_frame.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
-bottom_frame.grid(row=1, column=0, columnspan=2, sticky="ew")
+separator.grid(row=1, column=0, columnspan=2, sticky="ew")
+bottom_frame.grid(row=2, column=0, columnspan=2, sticky="ew")
 bottom_frame.grid_columnconfigure(0, weight=1)
 
 left_frame.grid_propagate(False)
@@ -54,15 +59,29 @@ content_frame.place(relx=0.5, rely=0.4, anchor="center")
 
 #------     FUNCTIONS   ------#
 
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except AttributeError:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
+db_img = PhotoImage(
+    file=resource_path("database_picture_03.png")
+)
+
 def step_0():               # Welcome screen
     welcome_label.grid()
     db_label.grid_remove()
     db_select.grid_remove()
     previous_btn.grid_remove()
+    prerequisites_label.grid()
 
 
 def step_1():               # Step for selecting type of database
     welcome_label.grid_remove()
+    prerequisites_label.grid_remove()
     db_label.grid()
     db_select.grid()
     previous_btn.grid()
@@ -156,9 +175,17 @@ def db_installation():
 welcome_label = Label(content_frame, text="Welcome to \n \"Installation of test database\" !!!",
                       wraplength=350,
                       justify="center",
-                      font=(FONT_2,12,"italic"),
+                      font=(FONT_2,12,"bold italic"),
                       bg="#E0E0E0")
 welcome_label.grid(row=0, column=1, pady=10)
+
+prerequisites_label= Label(content_frame, text="Pre-requisites:\nIf selecting PostgreSQL for database type, "
+                                               "please ensure that you have it installed on your local environment.",
+                           wraplength=350,
+                           justify="left",
+                           font=(FONT_2, 10),
+                           bg="#E0E0E0")
+prerequisites_label.grid(row=1, column=1, pady=10)
 
     #button next
 next_btn = Button(bottom_frame, text="Next", width=10, command=next_button)
@@ -201,15 +228,19 @@ db_password.grid_remove()
 
     #database user label
 db_user_label = Label(content_frame, text="Enter username:", bg="#E0E0E0")
-db_user_label.grid(row=1, column=0, columnspan=2, pady=10)
+db_user_label.grid(row=1, column=0, columnspan=2, pady=10, sticky="e")
 db_user_label.grid_remove()
 
-    #database password
+    #database password label
 db_password_label = Label(content_frame, text="Enter password:", bg="#E0E0E0")
-db_password_label.grid(row=2, column=0, columnspan=2, pady=10)
+db_password_label.grid(row=2, column=0, columnspan=2, pady=10, sticky="e")
 db_password_label.grid_remove()
 
-
+    #database picture
+db_img = PhotoImage(file=resource_path("database_picture_03.png"))
+canvas = Canvas(left_frame, width=100, height=80, bg="#E0E0E0",highlightthickness=0)
+db_frame_img = canvas.create_image(50,50,image=db_img)
+canvas.grid(row=0, column=0, pady=100)
 #------     END OF GUI    ------#
 
 window.mainloop()
