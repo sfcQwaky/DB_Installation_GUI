@@ -59,7 +59,7 @@ content_frame.place(relx=0.5, rely=0.4, anchor="center")
 
 #------     FUNCTIONS   ------#
 
-def resource_path(relative_path):
+def resource_path(relative_path):            #function for selecting relative path for image
     try:
         base_path = sys._MEIPASS
     except AttributeError:
